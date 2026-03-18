@@ -15,7 +15,9 @@ st.set_page_config(
     layout="wide"
 )
 
-st.image('logo_syng.png')
+st.write('')
+st.write('')
+st.image('Directional_pack/logo_syng.png', use_container_width=True)
 st.sidebar.image('logo_syngular_png.png', width=225)
 
 # ----------------------------------------------------------
