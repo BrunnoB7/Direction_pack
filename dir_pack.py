@@ -3,7 +3,7 @@ import numpy as np
 import plotly.graph_objects as go
 import pandas as pd
 from scipy.optimize import root_scalar
-from scipy.optimize import minimize
+
 
 # ----------------------------------------------------------
 # CONFIGURAÇÃO DA PÁGINA
@@ -14,6 +14,9 @@ st.set_page_config(
     page_icon="🛢️",
     layout="wide"
 )
+
+st.image('Directional_pack/logo_syng.png')
+st.sidebar.image('Directional_pack/logo_syngular_png.png', width=225)
 
 # ----------------------------------------------------------
 # ESTILO VISUAL (deixa mais profissional)
@@ -44,12 +47,13 @@ st.markdown("""
 # HEADER
 # ----------------------------------------------------------
 
-st.markdown('<p class="main-title">Otimização de Trecho Horizontal</p>', unsafe_allow_html=True)
+st.markdown('### Otimização de Trecho Horizontal')
 
 st.markdown(
 """
-Interactive tool to evaluate pressure distribution along horizontal wells.
-Adjust the parameters on the left panel to update the pressure profile.
+Para um conjunto de propriedades do reservatório, o software analisa a distribuição de pressão ao longo da seção 
+horizontal do poço. A ferramenta permite realizar análises de sensibilidade do comprimento do trecho horizontal e do 
+diâmetro do poço, possibilitando a estimativa do comprimento horizontal ótimo.
 """
 )
 
@@ -61,24 +65,63 @@ st.divider()
 
 st.sidebar.header("Parâmetros de Entrada")
 
+# valores iniciais
+if "slide_ch" not in st.session_state:
+    st.session_state.slide_ch = 500.0
+
+if "ch" not in st.session_state:
+    st.session_state.ch = 500.0
+
+
+# sincroniza quando o slider muda
+def update_from_slider():
+    st.session_state.ch = st.session_state.slide_ch
+
+
+# sincroniza quando o number_input muda
+def update_from_input():
+    st.session_state.slide_ch = st.session_state.ch
+
+
 liner_length = st.sidebar.slider(
-    "Horizontal Section Length (m)",
-    min_value=100,
-    max_value=2000,
-    value=800,
-    step=5
+    "Comprimento da seção horizontal (m)",
+    min_value=100.0,
+    max_value=2000.0,
+    step=0.1,
+    key="slide_ch",
+    on_change=update_from_slider
 )
 
+st.sidebar.number_input(
+    "Comprimento da seção horizontal (m)",
+    min_value=100.0,
+    max_value=2000.0,
+    step=0.1,
+    key="ch",
+    on_change=update_from_input
+)
+
+# liner_length = st.sidebar.slider(
+#     "Horizontal Section Length (m)",
+#     min_value=100.0,
+#     max_value=2000.0,
+#     step=0.1,
+#     value=st.session_state.ch,
+#     key='slide_ch'
+# )
+
+# st.sidebar.number_input('Comprimento da seção horizontal', min_value=50.0, max_value=2000.0, key='ch', step=0.1)
+
 diameters = {
-    '7"': 0.1778,
-    '6 1/8"': 0.1555,
-    '5"': 0.127,
-    '4 3/4"': 0.12065
+    '12 1/4" x 9 5/8"': 12.25/39.37,
+    '8 1/2" x 7"': 0.1778,
+    '6 1/8" x 5"': 0.127,
+    '6 1/8" x 4 3/4"': 0.12065
 }
 
 liner_diameter = st.sidebar.selectbox(
     "Diâmetro do trecho horizontal (in)",
-    ['7"', '6 1/8"', '5"', '4 3/4"']
+    ['12 1/4" x 9 5/8"', '8 1/2" x 7"', '6 1/8" x 5"', '6 1/8" x 4 3/4"']
 )
 
 st.sidebar.markdown("---")
@@ -128,6 +171,7 @@ def goal(flow_rate=st.session_state.flow_rate):
 if st.sidebar.button("Atualizar simulação"):
     solution = root_scalar(goal, bracket=[0, 1])
     st.session_state.flow_rate = solution.root
+    st.rerun()
 
 
 df['Q(x_i)'] = st.session_state.flow_rate - flow_s * df['x_i']
@@ -208,16 +252,6 @@ fig.update_layout(
     height=600
 )
 fig.update_xaxes(dtick=100)
-
-fig.update_layout(
-    legend=dict(
-        orientation="h",   # legenda horizontal
-        yanchor="bottom",
-        y=1.02,            # posição acima do gráfico
-        xanchor="center",
-        x=0.5
-    )
-)
 
 st.plotly_chart(fig, use_container_width=True)
 
