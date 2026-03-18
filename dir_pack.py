@@ -209,6 +209,16 @@ fig.update_layout(
 )
 fig.update_xaxes(dtick=100)
 
+fig.update_layout(
+    legend=dict(
+        orientation="h",   # legenda horizontal
+        yanchor="bottom",
+        y=1.02,            # posição acima do gráfico
+        xanchor="center",
+        x=0.5
+    )
+)
+
 st.plotly_chart(fig, use_container_width=True)
 
 # ----------------------------------------------------------
