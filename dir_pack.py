@@ -15,8 +15,8 @@ st.set_page_config(
     layout="wide"
 )
 
-st.image('Directional_pack/logo_syng.png')
-st.sidebar.image('Directional_pack/logo_syngular_png.png', width=225)
+st.image('logo_syng.png')
+st.sidebar.image('logo_syngular_png.png', width=225)
 
 # ----------------------------------------------------------
 # ESTILO VISUAL (deixa mais profissional)
