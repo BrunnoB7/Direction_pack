@@ -19,7 +19,14 @@ st.write('')
 st.write('')
 st.image('logo_syng.png', use_container_width=True)
 st.sidebar.image('logo_syngular_png.png', width=225)
-
+hide_st_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_st_style, unsafe_allow_html=True)
 # ----------------------------------------------------------
 # ESTILO VISUAL (deixa mais profissional)
 # ----------------------------------------------------------
